@@ -1,0 +1,32 @@
+---
+- hosts:
+    - k8smaster
+    - k8snode1
+    - k8snode2
+    - k8snode3
+  gather_facts: no
+  roles:
+    - k8s-prerequisites
+
+- hosts:
+    - k8smaster
+  gather_facts: no
+  roles:
+    - k8smaster
+
+- hosts:
+    - k8snode1
+    - k8snode2
+    - k8snode3
+  gather_facts: no
+  tasks:
+  - name: Copy kubeadm join script to nodes
+    copy:
+      src: /tmp/kubeadm_join.sh
+      dest: /tmp/kubeadm_join.sh
+      #remote_src: yes
+
+  - name: Kubeadm join command execution for nodes
+    script:
+        cmd: /tmp/kubeadm_join.sh
+    become: true

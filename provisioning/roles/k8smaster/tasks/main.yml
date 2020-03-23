@@ -1,0 +1,67 @@
+- name: Enabling calico network for kube process communication
+  shell:
+    cmd: kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=192.168.10.100
+  become: true
+
+- name: Running commands returned by kubeadm init - creating kube directory
+  shell:
+    cmd: mkdir /home/vagrant/.kube
+
+- name: Running commands returned by kubeadm init - copying admin file
+  shell:
+    cmd: cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+  become: true
+
+- name: Running commands returned by kubeadm init - changing kube config file permissions
+  shell:
+    cmd: chown $(id -u):$(id -g) /home/vagrant/.kube/config
+  become: true
+
+- name: Importing calico RBAC role
+  shell:
+    cmd: export KUBECONFIG=/etc/kubernetes/admin.conf; kubectl apply -f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+  become: true
+
+- name: Importing calico network
+  shell:
+    cmd: export KUBECONFIG=/etc/kubernetes/admin.conf; kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+  become: true
+
+- name: Creating kubernetes dashboard
+  shell:
+    cmd: export KUBECONFIG=/etc/kubernetes/admin.conf; kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-rc6/aio/deploy/recommended.yaml
+  become: true
+
+- name: Running kubeadm join
+  shell:
+    cmd: kubeadm token create --print-join-command >> /tmp/kubeadm_join.sh
+  become: true
+
+- name: Setting executable permission to kubeadm join script
+  shell:
+    cmd: chmod +x /tmp/kubeadm_join.sh
+  become: true
+
+#- name: Starting kube proxy to access kubernetes dashboard
+#  shell:
+#    cmd: nohup kubectl proxy </dev/null >/dev/null 2>&1 &
+#  become: true
+
+#- name: Creating service account for k8s dashboard
+#  shell:
+#    cmd: kubectl create serviceaccount dashboard -n default
+#  become: true
+
+#- name: Adding cluster binding roles for k8s dashboard
+#  shell:
+#    cmd: "kubectl create clusterrolebinding dashboard-admin -n default --clusterrole=cluster-admin --serviceaccount=default-dashboard"
+#  become: true
+
+#- name: Printing k8s dashboard token
+#  shell:
+#    cmd: "kubectl get secret $(kubectl get serviceaccount dashboard -o jsonpath=\"{.secrets[0].name}\") -o jsonpath=\"{.data.token}\" | base64 --decode"
+#  register: k8s_dashboard_token
+#  become: true
+
+#- debug:
+#    msg: "{{ k8s_dashboard_token }}"

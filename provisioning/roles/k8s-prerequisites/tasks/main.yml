@@ -1,0 +1,67 @@
+- name: Updating apt repositories
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  become: true
+
+- name: Disabling swap space
+  shell: swapoff -a
+
+- name: Install OpenSSH server
+  apt:
+    name: openssh-server
+  become: true
+
+- name: Updating apt after openssh-server installation
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  become: true
+
+- name: Install Docker
+  apt:
+    name: docker.io
+  become: true
+
+- name: Install yum
+  apt:
+    name: yum
+  become: true
+
+- name: Install kubernetes pre-requisites
+  apt:
+    name:
+      - apt-transport-https
+      - curl
+  become: true
+
+- name: Adding apt key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  become: true
+
+- name: Adding apt repositories
+  apt_repository:
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+    filename: /etc/apt/sources.list.d/kubernetes.list
+  become: true
+
+- name: Updating apt after adding repo urls
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  become: true
+
+- name: Install kubernetes pre-requisite binaries
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+  become: true
+
+- name: Updating kubernetes configuration
+  lineinfile:
+    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    line: Environment="cgroup-driver=systemd/cgroup-driver=cgroupfs"
+  become: true

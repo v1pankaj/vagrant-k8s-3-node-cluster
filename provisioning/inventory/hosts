@@ -1,0 +1,17 @@
+k8smaster ansible_ssh_host=k8smaster.local ansible_ssh_user='vagrant' ansible_ssh_private_key_file='/vagrant/.vagrant/machines/k8smaster/virtualbox/private_key'
+k8snode1 ansible_ssh_host=k8snode1.local ansible_ssh_user='vagrant' ansible_ssh_private_key_file='/vagrant/.vagrant/machines/k8snode1/virtualbox/private_key'
+k8snode2 ansible_ssh_host=k8snode2.local ansible_ssh_user='vagrant' ansible_ssh_private_key_file='/vagrant/.vagrant/machines/k8snode2/virtualbox/private_key'
+k8snode3 ansible_ssh_host=k8snode3.local ansible_ssh_user='vagrant' ansible_ssh_private_key_file='/vagrant/.vagrant/machines/k8snode3/virtualbox/private_key'
+
+[group0]
+k8smaster
+
+[group1]
+k8snode1
+
+[group2]
+k8snode2
+
+[group3]
+k8snode3
+
