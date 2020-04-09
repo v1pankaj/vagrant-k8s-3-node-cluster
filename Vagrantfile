@@ -9,6 +9,10 @@ $addingsshkeys = <<-SCRIPT
 ssh-keyscan -t rsa -H k8smaster.local >> /home/vagrant/.ssh/known_hosts
 SCRIPT
 
+$masterscript = <<-SCRIPT
+sudo apt update; sudo apt-get install -y python-pip; sudo pip install --upgrade pip; sudo pip install --upgrade ansible==2.9.0; sudo snap install helm --classic; sudo apt-get install -y git-all
+SCRIPT
+
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
   config.vm.box_version = "20200229.0.0"
@@ -22,8 +26,9 @@ Vagrant.configure("2") do |config|
    k8smaster.vm.hostname = "k8smaster"
    k8smaster.vm.provision "shell", inline: $addingsshkeys
    k8smaster.vm.provision "shell", inline: $commonscript
-  config.vm.provision "shell",
-   inline: 'sudo apt update; sudo apt-get install -y python-pip; sudo pip install --upgrade pip; sudo pip install --upgrade ansible==2.9.0'
+   k8smaster.vm.provision "shell", inline: $masterscript
+#  config.vm.provision "shell",
+#   inline: ''
   end
 
   config.vm.define "k8snode1" do |k8snode1|
