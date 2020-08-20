@@ -2,6 +2,8 @@
 
 This is a sample project to create a 4 node cluster (Master = 1, Workers = 3). Vagrantfile creates 4 Virtual VMs in VirtualBox and then ansible scripts are used to install prequisite softwares required to configure and run Kubernetes.
 
+Note:- Vagrant is needed to create VM instances using virtual images
+
 # How to create Kubernetes Cluster
 
 Run following commands on a terminal to clone this project and then execute a script which creates all VMs, Installs Kubernetes binaries, Creates a Cluster with 4 nodes and then joins 3 worker nodes with master:
