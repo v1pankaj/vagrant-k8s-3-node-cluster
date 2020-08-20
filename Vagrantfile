@@ -14,6 +14,9 @@ sudo apt update; sudo apt-get install -y python-pip; sudo pip install --upgrade 
 SCRIPT
 
 Vagrant.configure("2") do |config|
+  config.vm.synced_folder "./", "/vagrant",
+     owner: "vagrant",
+     mount_options: ["dmode=775,fmode=600"]
   config.vm.box = "ubuntu/xenial64"
   config.vm.box_version = "20200229.0.0"
   virtualbox__intnet = "k8s_network"
